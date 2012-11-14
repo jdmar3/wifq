@@ -1,0 +1,284 @@
+#! /bin/bash
+### FUNCTION: Print warning message. 
+function warning() 
+{ 
+    echo "$*" >&2 
+    exit 1   
+} 
+### FUNCTION: Print error message and exit. 
+function error() 
+{ 
+    echo "$*" >&2 
+    exit 1 
+} 
+### FUNCTION: Check if value entered is BASE10 integer
+function is_not_integer() {
+    s=$(echo $* | tr -d 0-9)
+    if [ -z "$s" ]; then
+        return 1
+    else
+        return 0
+    fi
+}
+### FUNCTION: Pause at end of script for user prompt to close
+function wait_enter() {
+	echo ""
+	read -p "Please press enter to close." nothing
+	}
+### Display README text
+if [[ "$1" = [Rr][Ee][Aa][Dd][Mm][Ee] || "$1" = [-][-][Hh][Ee][Ll][Pp] ]] 
+	then
+		echo -e "#######################################################################"
+		echo -e
+		echo -e "Welcome to Wifq v0.1!"
+		echo -e 
+		echo -e "Copyright 2011 John D. Martin III"
+		echo -e "http://johndmart.in" 
+		echo -e 
+		echo -e "#######################################################################"
+		echo -e 
+		echo -e "This program is free software: you can redistribute it and/or modify"
+    	echo -e "it under the terms of the GNU General Public License as published by"
+    	echo -e "the Free Software Foundation, either version 3 of the License, or"
+    	echo -e "(at your option) any later version."
+		echo 
+    	echo -e "This program is distributed in the hope that it will be useful,"
+    	echo -e "but WITHOUT ANY WARRANTY; without even the implied warranty of"
+    	echo -e "MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
+    	echo -e "GNU General Public License for more details."
+		echo
+    	echo -e "You should have received a copy of the GNU General Public License"
+    	echo -e "along with this program.  If not, see <http://www.gnu.org/licenses/>."
+    	echo -e		
+  		echo -e "#######################################################################"
+		echo -e
+		echo -e "Please note that there are two scripts available. 'wifq' has some" 
+		echo -e "unicode characters which do not work in some terminal environments. If"
+		echo -e "you are not able to see the 𝛽 [beta] character, then instead use" 
+		echo -e "'wifq-nu,' which is free of unicode characters in the script." 
+		echo -e 
+		echo -e "There is no need to install this script. You may simply run it in any" 
+		echo -e "terminal using a bash shell. You may have to make it executable first "
+		echo -e "if it is not already. To do so type the following while in the "
+		echo -e "directory to which you extracted the files:"
+		echo -e 
+		echo -e "chmod +x wifq" 
+		echo -e 
+		echo -e "If you put the script in a PATH available to your user (e.g. -" 
+		echo -e "/usr/local/bin in most Linux distros) then you can invoke the script" 
+		echo -e "like any other program."
+		echo -e 
+		echo -e "Example:" 
+		echo -e "	wifq 3 1 15"
+		echo -e 
+		echo -e "If you wish to just run the program from anywhere, provided it is" 
+		echo -e "executable and you have suitable permissions, then add ./ in front."
+		echo -e 
+		echo -e "Example:"
+		echo -e "	./wifq 3 1 15" 
+		echo -e 
+		echo -e "See below for usage instructions and further explanation. The help text" 
+		echo -e "as below can be invoked by running the program with '-h' or '--help'"
+		echo -e 
+    	echo -e "#######################################################################"
+		echo -e 
+		exit 0
+fi
+### Display help text
+if [[ "$1" = [hH] || "$1" = [Hh][Ee][Ll][Pp] || "$1" = [-][hH] || "$1" = [-][-][Hh][Ee][Ll][Pp] ]]
+	then
+		echo -e "Usage:	wifq [n] [𝛽] [S] ..."
+		echo -e "	wifq ..."
+		echo -e "Derive values for use in the construction of a magic square of any size" 
+		echo -e "n x n."
+		echo -e "Example:	wifq 3 1 15"
+		echo -e
+		echo -e "  -h, --help			Displays this help screen. "
+		echo -e "      --readme			Displays the README for the program."
+		echo
+		echo -e "If no values or invalid values are supplied in the command, the user "
+		echo -e "will be prompted for values. "
+		echo -e "Example:	wifq"
+		echo -e "		... "
+		echo -e "		Please enter a value for n: ..." 
+		echo
+		echo -e "The input values correspond to the square as follows:"
+		echo
+		echo -e "   n	: the 'size' of the square or the number of elements on a given "
+		echo -e "		side"
+		echo -e "   𝛽	: the increment of the sequence of elements within the square" 
+		echo -e "   S	: the 'magic constant' of the square or the sum of any row, "
+		echo -e "		column ordiagonal"
+		echo
+		echo -e "The following equation describes the relationship between these values:"
+		echo
+		echo -e "   S = A + (𝛽 * n/2)(n^2 - 1)"
+		echo
+		echo -e "The script tests whether or not the square is possible and then "
+		echo -e "caluculates the following values:"
+		echo
+		echo -e "   A	: the value of the lowest sequential element in the square"
+		echo -e "   Amin	: the same value as A" 
+		echo -e "   Amax	: the value of the highest sequential element in the square" 
+		echo -e "   𝜎 	: the sum of Amin and Amax"
+		echo -e "   T	: the sum of all elements in the square" 
+		echo -e "   T+S	: the sum of three rows OR columns and one diagonal" 
+		echo -e "   T*	: the sum of all rows AND columns AND both diagonals"
+		echo
+		echo -e "The script in its current state does NOT output the arrangement of the "
+		echo -e "magic square itself."
+		echo 
+		echo -e "This script will find a set of values related to the construction of a "
+		echo -e "'magic square' according to parameters derived from the works of "
+		echo -e "Abu-l-'Abbas Ahmad b. Ali b. Yusuf al-Qurashi al-Buni (d. 622H/1225AD) "
+		echo -e "and other sources and developed by Prof. Saiyad Nizamuddin Ahmad into "
+		echo -e "a set of equations. His equations were used to develop the algorithms "
+		echo -e "utilized in this script. "
+		echo 
+		echo -e "For further information,  see al-Buni, Manba' Usul al-Hikma, Cairo: "
+		echo -e "Mustafa al-Babi al-Halabi, ND." 
+		echo
+		echo -e "Report bugs to: john.d.martin.iii@gmail.com"
+		echo -e 
+		echo -e "Visit the author's website: http://youcantmakemistakes.com"
+		echo
+		echo -e "This is version 0.1."
+		echo
+		echo -e "Copyright 2011 John D. Martin III"
+		echo
+		exit 0
+fi	
+### Display standard equation for Buni's magic squares
+echo -e "\E[;34m\033[1mS\033[0m	= \E[;31m\033[1mA\033[0m\E[;32m\033[1mn\033[0m + (\E[;35m\033[1m𝛽\033[0m * \E[;32m\033[1mn\033[0m/2)(\E[;32m\033[1mn\033[0m^2 - 1)" 
+echo
+echo -e "Solving for \E[;31m\033[1mA\033[0m" 
+echo
+### Input n variable
+n="$1" 
+while is_not_integer $n || [[ ! $n -ge 3 ]] || [[ ! $n -le 100 ]] || [[ -z "$n" ]]; do 
+	echo -ne "Please enter a value for \E[;32m\033[1mn\033[0m: "		
+	    read n 
+### Is n greater than 3? 
+	if is_not_integer $n || [[ $n -lt 3 ]] || [[ $n -gt 100 ]] 
+		then 
+			echo -e "\E[;32m\033[1mn\033[0m must be an integer greater than or equal to 3 and less than or equal to 100."
+	fi 
+done
+echo -e "\E[;32m\033[1mn\033[0m = $n" 
+### Input B variable
+B="$2"
+while is_not_integer $B || [[ ! $B -gt 0 ]] || [[ -z "$B" ]]; do 
+	echo -ne "Please enter a value for \E[;35m\033[1m𝛽\033[0m: " 
+	read B 	
+### Is B greater than 0?
+	if is_not_integer $B || [[ $B -le 0 ]] 
+		then 
+			echo -e "\E[;35m\033[1m𝛽\033[0m must be an integer greater than 0."
+	fi
+done 
+echo -e "\E[;35m\033[1m𝛽\033[0m = $B" 
+### Indicate validity for S variable and input 
+Smin=$( echo "scale=1; $n + $B * ($n/2) * ($n^2 - 1)" | bc | awk '{printf "%.0f\n", $1}' )
+S="$3"  
+while is_not_integer $S || [[ ! $S -ge $Smin ]] || [[ -z "$S" ]]; do 
+### Is S greater than or equal to n + (n/2)(n^2 - 1) ?
+	if is_not_integer $S || [[ $S -lt $Smin ]] 
+		then 
+			echo -e "\E[;34m\033[1mS\033[0m must be greater than or equal to $Smin for any $n x $n square where \E[;35m\033[1m𝛽\033[0m = $B."
+	fi
+	echo -ne "Please enter a value for \E[;34m\033[1mS\033[0m: " 
+	read S 
+done 
+echo -e "\E[;34m\033[1mS\033[0m = $S" 
+echo
+### Work out detailed information for square based on above values
+A=$( echo "scale=5; ($S - $B * ($n/2) * ($n^2 -1))/$n" | bc | awk '{printf "%.0f\n", $1}' ) 
+Amin=$A 
+Amax=$( echo "scale=1; $Amin + $B * ($n^2 - 1)" | bc | awk '{printf "%.0f\n", $1}' ) 
+sig=$( echo "scale=1; $Amin + $Amax" | bc | awk '{printf "%.0f\n", $1}' ) 
+T=$( echo "scale=1; $n * $S" | bc | awk '{printf "%.0f\n", $1}' ) 
+TS=$( echo "scale=1; $T + $S" | bc | awk '{printf "%.0f\n", $1}' ) 
+Tast=$( echo "scale=1; $S * (2 * $n) + (2 * $S)" | bc | awk '{printf "%.0f\n", $1}' ) 
+### Work out preliminary values necessary for testing possibility of 
+### square
+Brem=$(( $B % 2 ))
+n2=$( echo "scale=1; $n/2" | bc | awk '{printf "%.0f\n", $1}' ) 	
+Srem=$(( $S % 2 )) 
+nrem=$(( $n % 2 )) 
+divS=$(( $S % $n )) 
+divSn=$(( $S % $n2 )) 
+### Test for the possibility of square based on all of the above values 
+### and variables, applying the below conditions
+### Conditions for the possibility of a magic square:
+### 1. B is odd, S is odd, n is odd, S is divisible by n
+	if [ $Brem -gt 0 ] && [ $Srem -gt 0 ] && [ $nrem -gt 0 ] && [ $divS -eq 0 ] 
+		then 
+			echo -e "The $n x $n square is possible."
+### 2. B is odd, S is even, n is odd, S is divisible by n 
+	elif [ $Brem -gt 0 ] && [ $Srem -eq 0 ] && [ $nrem -gt 0 ] && [ $divS -eq 0 ] 
+		then 
+			echo -e "The $n x $n square is possible." 
+### 3. B is odd, S is odd, n is even, S is divisible by n/2 but not by n
+	elif [ $Brem -gt 0 ] && [ $Srem -gt 0 ] && [ $nrem -eq 0 ] && [ $divSn -eq 0 ] && [ $divS -gt 0 ] 
+		then 
+			echo -e "The $n x $n square is possible." 
+### 4. B is odd, S is even, n is even, S is divisible by n/2 but not by n
+	elif [ $Brem -gt 0 ] && [ $Srem -eq 0 ] && [ $nrem -eq 0 ] && [ $divSn -eq 0 ] && [ $divS -gt 0 ] 
+		then 
+			echo -e "The $n x $n square is possible." 
+### 5. B is even, S is even, n is even, S is divisible by n
+	elif [ $Brem -eq 0 ] && [ $Srem -eq 0 ] && [ $nrem -eq 0 ] && [ $divS -eq 0 ] 
+		then 
+			echo -e "The $n x $n square is possible."
+### 6. B is even, S is odd, n is even, S is divisible by n 
+	elif [ $Brem -eq 0 ] && [ $Srem -gt 0 ] && [ $nrem -eq 0 ] && [ $divS -eq 0 ] 
+		then 
+			echo -e "The $n x $n square is possible." 
+### 7. B is even, S is even, n is odd, S is divisible by n/2 but not by n
+	elif [ $Brem -eq 0 ] && [ $Srem -eq 0 ] && [ $nrem -gt 0 ] && [ $divSn -eq 0 ] && [ $divS -gt 0 ] 
+		then 
+			echo -e "The $n x $n square is possible."
+### 8. B is even, S is odd, n is odd, S is divisible by n/2 but not by n
+	elif [ $Brem -eq 0 ] && [ $Srem -gt 0 ] && [ $nrem -gt 0 ] && [ $divSn -eq 0 ] && [ $divS -gt 0 ] 
+		then 
+			echo -e "The $n x $n square is possible."
+### If the square meets none of the above conditions then it is not 
+### possible
+	else 
+			echo -e "The $n x $n square is not possible."
+			wait_enter
+			exit 0
+	fi 
+### Display equation with values replacing variables and solution for A
+echo
+echo -e "\E[;34m\033[1mS\033[0m	= \E[;31m\033[1mA\033[0m\E[;32m\033[1mn\033[0m + (\E[;35m\033[1m𝛽\033[0m * \E[;32m\033[1mn\033[0m/2)(\E[;32m\033[1mn\033[0m^2 - 1)"  
+echo -e "\E[;34m\033[1m$S\033[0m	= \E[;31m\033[1mA\033[0m\E[;32m\033[1m$n\033[0m + (\E[;35m\033[1m$B\033[0m * \E[;32m\033[1m$n\033[0m/2)(\E[;32m\033[1m$n\033[0m^2 - 1)" 
+echo -e "\E[;31m\033[1mA\033[0m	= \E[;31m\033[1m$A\033[0m" 
+echo 
+### Prompt use for display of extended information for square	
+verbose="" 
+while [[ "$verbose" != [yY] && "$verbose" != [yY][Ee][Ss] && "$verbose" != [nN] && "$verbose" != [nN][Oo] ]]; do 
+	echo -ne "Detailed information? [y/n] " 
+	read verbose
+done 
+echo
+### If, requested display extended information for square, otherwise
+### exit program.  
+case $verbose in 
+	[yY] | [yY][Ee][Ss] ) 
+		echo -e "\E[;31m\033[1mA\033[0m 	= $A" 
+		echo -e "\033[1mAmin\033[0m	= $Amin" 
+		echo -e "\033[1mAmax\033[0m	= $Amax" 
+		echo -e "\033[1m𝜎\033[0m 	= $sig" 
+		echo -e "\033[1mT\033[0m	= $T" 
+		echo -e "\033[1mT+S\033[0m	= $TS" 
+		echo -e "\033[1mT*\033[0m	= $Tast" 
+		wait_enter
+		exit 0 
+		;; 
+	[nN] | [n|N][O|o] )  
+		wait_enter
+		exit 0 
+		;; 
+esac 
+### End of program
