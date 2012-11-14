@@ -1,7 +1,8 @@
 #  Welcome to Wifq v0.1!
 
 Copyright 2011 John D. Martin III
-http://youcantmakemistakes.com
+
+[http://johndmart.in](http://johndmart.in)
 
 # License
 
@@ -51,43 +52,46 @@ as below can be invoked by running the program with '-h' or '--help'
 # Usage
 
 Usage:	wifq [n] [𝛽] [S] ...
-alias vncstart='screen -dmS "vnc-server" x11vnc -forever -usepw -ncache 10 -httpdir /usr/share/vnc-java/ -httpport 5800'
 	wifq ...
+
 Derive values for use in the construction of a magic square of any size
 n x n.
-Example:	wifq 3 1 15
 
-  -h, --help			Displays this help screen. 
-      --readme			Displays the README for the program.
+Example:	`wifq 3 1 15`
+
+* -h, --help			Displays this help screen. 
+* --readme			Displays the README for the program.
 
 If no values or invalid values are supplied in the command, the user 
 will be prompted for values. 
-Example:	wifq
-		... 
-		Please enter a value for n: ...
+
+Example:	
+    wifq
+    ... 
+    Please enter a value for n: ...
 
 The input values correspond to the square as follows:
 
-   n	: the 'size' of the square or the number of elements on a given 
+* n : the 'size' of the square or the number of elements on a given 
 		side
-       𝛽	: the increment of the sequence of elements within the square
-   S	: the 'magic constant' of the square or the sum of any row, 
+* 𝛽 : the increment of the sequence of elements within the square
+* S : the 'magic constant' of the square or the sum of any row, 
 		column ordiagonal
 
 The following equation describes the relationship between these values:
 
-   S = A + (𝛽 * n/2)(n^2 - 1)
+> S = A + (𝛽 * n/2)(n^2 - 1)
 
 The script tests whether or not the square is possible and then 
 caluculates the following values:
 
-   A	: the value of the lowest sequential element in the square
-   Amin	: the same value as A
-   Amax	: the value of the highest sequential element in the square
-       𝜎 	: the sum of Amin and Amax
-   T	: the sum of all elements in the square
-   T+S	: the sum of three rows OR columns and one diagonal
-   T*	: the sum of all rows AND columns AND both diagonals
+* A : the value of the lowest sequential element in the square
+* Amin : the same value as A
+* Amax : the value of the highest sequential element in the square
+* 𝜎  : the sum of Amin and Amax
+* T : the sum of all elements in the square
+* T+S : the sum of three rows OR columns and one diagonal
+* T* : the sum of all rows AND columns AND both diagonals
 
 The script in its current state does NOT output the arrangement of the 
 magic square itself.
@@ -102,9 +106,9 @@ utilized in this script. wifq
 For further information,  see al-Buni, Manba' Usul al-Hikma, Cairo: 
 Mustafa al-Babi al-Halabi, ND.
 
-Report bugs to: john.d.martin.iii@gmail.com
+Report bugs to: [me@johndmart.in](me@johndmart.in)
 
-Visit the author's website: http://youcantmakemistakes.com
+Visit the author's website: [http://johndmart.in](http://johndmart.in)
 
 This is version 0.1.
 
